@@ -41,3 +41,34 @@ export interface VideoMetadata {
   format: string;
   resolution: string;
 }
+
+export interface Config {
+  env: string;
+
+  logging: {
+    level: string;
+  };
+
+  aws: {
+    region: string;
+    s3: {
+      bucket: string;
+    };
+    sqs: {
+      queueUrl: string;
+    };
+  };
+
+  database: {
+    host: string;
+    port: number;
+    database: string;
+    user: string;
+    password: string;
+  };
+
+  video: {
+    maxDuration: number;
+    tempDir: string;
+  };
+}
