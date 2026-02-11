@@ -60,11 +60,7 @@ export interface Config {
   };
 
   database: {
-    host: string;
-    port: number;
-    database: string;
-    user: string;
-    password: string;
+    connectionString: string;
   };
 
   video: {

@@ -36,11 +36,7 @@ export const config: Config = {
   },
 
   database: {
-    host: getEnvVar("DB_HOST"),
-    port: getEnvVarAsNumber("DB_PORT", 5432),
-    database: getEnvVar("DB_NAME"),
-    user: getEnvVar("DB_USER"),
-    password: getEnvVar("DB_PASSWORD"),
+    connectionString: getEnvVar("DATABASE_URL"),
   },
 
   video: {
