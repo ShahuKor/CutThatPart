@@ -42,6 +42,20 @@ export interface VideoMetadata {
   resolution: string;
 }
 
+export interface DownloadOptions {
+  youtubeUrl: string;
+  startTime: number; // seconds
+  endTime: number; // seconds
+  outputPath: string;
+  jobId: string;
+}
+
+export interface DownloadResult {
+  filePath: string;
+  fileSize: number;
+  duration: number;
+}
+
 export interface Config {
   env: string;
 
