@@ -1,5 +1,4 @@
-import { Pool, PoolClient, QueryResult, QueryResultRow } from "pg";
-import { config } from "../config/index";
+import { neon, NeonQueryFunction } from "@neondatabase/serverless";
 import { createLogger } from "../utils/logger";
 import { DatabaseError } from "../config/errors";
 import { ClipStatus } from "../types";
@@ -7,31 +6,19 @@ import { ClipStatus } from "../types";
 const logger = createLogger("Database");
 
 class Database {
-  private pool: Pool;
+  private sql: NeonQueryFunction<false, false>;
 
   constructor() {
-    this.pool = new Pool({
-      connectionString: config.database.connectionString,
-      ssl: { rejectUnauthorized: false },
-      max: 20,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 5000,
-    });
-
-    this.pool.on("error", (err) => {
-      logger.error("Unexpected database pool error", { error: err.message });
-    });
-
-    this.pool.on("connect", () => {
-      logger.info("Database connection pool established");
-    });
+    if (!process.env.DATABASE_URL) {
+      throw new Error("DATABASE_URL is not defined");
+    }
+    this.sql = neon(process.env.DATABASE_URL);
+    logger.info("Neon database client initialized");
   }
 
   async connect(): Promise<void> {
     try {
-      const client = await this.pool.connect();
-      await client.query("SELECT NOW()");
-      client.release();
+      await this.sql`SELECT NOW()`;
       logger.info("Database connection successful");
     } catch (error: any) {
       logger.error("Database connection failed", { error: error.message });
@@ -45,42 +32,57 @@ class Database {
     try {
       logger.info("Initializing database schema...");
 
-      await this.pool.query(`
-      CREATE TABLE IF NOT EXISTS clips (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        youtube_url TEXT NOT NULL,
-        start_time INTEGER NOT NULL CHECK (start_time >= 0),
-        end_time INTEGER NOT NULL CHECK (end_time > start_time),
-        sharer_name VARCHAR(255),
-        share_token VARCHAR(255) UNIQUE NOT NULL,
-        s3_key TEXT,
-        status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'failed')),
-        error_message TEXT,
-        file_size BIGINT,
-        duration INTEGER,
-        created_at TIMESTAMP DEFAULT NOW(),
-        updated_at TIMESTAMP DEFAULT NOW(),
-        expires_at TIMESTAMP DEFAULT NOW() + INTERVAL '2 days'
-      );
+      await this.sql`
+        CREATE TABLE IF NOT EXISTS clips (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          youtube_url TEXT NOT NULL,
+          start_time INTEGER NOT NULL CHECK (start_time >= 0),
+          end_time INTEGER NOT NULL CHECK (end_time > start_time),
+          sharer_name VARCHAR(255),
+          share_token VARCHAR(255) UNIQUE NOT NULL,
+          s3_key TEXT,
+          status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'failed')),
+          error_message TEXT,
+          file_size BIGINT,
+          duration INTEGER,
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW(),
+          expires_at TIMESTAMP DEFAULT NOW() + INTERVAL '2 days'
+        )
+      `;
 
-      CREATE INDEX IF NOT EXISTS idx_clips_share_token ON clips(share_token);
-      CREATE INDEX IF NOT EXISTS idx_clips_status ON clips(status);
-      CREATE INDEX IF NOT EXISTS idx_clips_expires_at ON clips(expires_at);
+      await this.sql`
+        CREATE INDEX IF NOT EXISTS idx_clips_share_token ON clips(share_token)
+      `;
 
-      CREATE OR REPLACE FUNCTION update_updated_at_column()
-      RETURNS TRIGGER AS $$
-      BEGIN
-        NEW.updated_at = NOW();
-        RETURN NEW;
-      END;
-      $$ LANGUAGE plpgsql;
+      await this.sql`
+        CREATE INDEX IF NOT EXISTS idx_clips_status ON clips(status)
+      `;
 
-      DROP TRIGGER IF EXISTS update_clips_updated_at ON clips;
-      CREATE TRIGGER update_clips_updated_at
-        BEFORE UPDATE ON clips
-        FOR EACH ROW
-        EXECUTE FUNCTION update_updated_at_column();
-    `);
+      await this.sql`
+        CREATE INDEX IF NOT EXISTS idx_clips_expires_at ON clips(expires_at)
+      `;
+
+      await this.sql`
+        CREATE OR REPLACE FUNCTION update_updated_at_column()
+        RETURNS TRIGGER AS $$
+        BEGIN
+          NEW.updated_at = NOW();
+          RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql
+      `;
+
+      await this.sql`
+        DROP TRIGGER IF EXISTS update_clips_updated_at ON clips
+      `;
+
+      await this.sql`
+        CREATE TRIGGER update_clips_updated_at
+          BEFORE UPDATE ON clips
+          FOR EACH ROW
+          EXECUTE FUNCTION update_updated_at_column()
+      `;
 
       logger.info("Database schema initialized successfully");
     } catch (error: any) {
@@ -91,34 +93,21 @@ class Database {
     }
   }
 
-  private async query<T extends QueryResultRow>(
-    text: string,
-    params?: any[],
-  ): Promise<QueryResult<T>> {
-    const start = Date.now();
-    try {
-      const result = await this.pool.query<T>(text, params);
-      const duration = Date.now() - start;
-      logger.debug("Query executed", { duration, rows: result.rowCount });
-      return result;
-    } catch (error: any) {
-      logger.error("Query failed", { error: error.message, query: text });
-      throw new DatabaseError(`Database query failed: ${error.message}`);
-    }
-  }
-
   async updateClipStatus(
     jobId: string,
     status: ClipStatus,
     errorMessage?: string,
   ): Promise<void> {
-    const query = `
-      UPDATE clips 
-      SET status = $1, error_message = $2, updated_at = NOW()
-      WHERE id = $3
-    `;
-    await this.query(query, [status, errorMessage || null, jobId]);
-    logger.info("Updated clip status", { jobId, status });
+    try {
+      await this.sql`
+        UPDATE clips 
+        SET status = ${status}, error_message = ${errorMessage || null}, updated_at = NOW()
+        WHERE id = ${jobId}
+      `;
+      logger.info("Updated clip status", { jobId, status });
+    } catch (error: any) {
+      throw new DatabaseError(`Failed to update clip status: ${error.message}`);
+    }
   }
 
   async updateClipCompleted(
@@ -127,62 +116,77 @@ class Database {
     fileSize: number,
     duration: number,
   ): Promise<void> {
-    const query = `
-      UPDATE clips 
-      SET 
-        status = $1,
-        s3_key = $2,
-        file_size = $3,
-        duration = $4,
-        updated_at = NOW()
-      WHERE id = $5
-    `;
-    await this.query(query, [
-      ClipStatus.COMPLETED,
-      s3Key,
-      fileSize,
-      duration,
-      jobId,
-    ]);
-    logger.info("Updated clip as completed", {
-      jobId,
-      s3Key,
-      fileSize,
-      duration,
-    });
+    try {
+      await this.sql`
+        UPDATE clips 
+        SET 
+          status = ${ClipStatus.COMPLETED},
+          s3_key = ${s3Key},
+          file_size = ${fileSize},
+          duration = ${duration},
+          updated_at = NOW()
+        WHERE id = ${jobId}
+      `;
+      logger.info("Updated clip as completed", {
+        jobId,
+        s3Key,
+        fileSize,
+        duration,
+      });
+    } catch (error: any) {
+      throw new DatabaseError(
+        `Failed to update clip as completed: ${error.message}`,
+      );
+    }
   }
 
   async getClipById(jobId: string): Promise<any | null> {
-    const query = "SELECT * FROM clips WHERE id = $1";
-    const result = await this.query(query, [jobId]);
-    return result.rows[0] || null;
+    try {
+      const rows = await this.sql`
+        SELECT * FROM clips WHERE id = ${jobId}
+      `;
+      return rows[0] || null;
+    } catch (error: any) {
+      throw new DatabaseError(`Failed to get clip: ${error.message}`);
+    }
   }
 
   async isClipValid(jobId: string): Promise<boolean> {
-    const query = `
-      SELECT id FROM clips 
-      WHERE id = $1 AND expires_at > NOW()
-    `;
-    const result = await this.query(query, [jobId]);
-    return result.rowCount ? result.rowCount > 0 : false;
+    try {
+      const rows = await this.sql`
+        SELECT id FROM clips 
+        WHERE id = ${jobId} AND expires_at > NOW()
+      `;
+      return rows.length > 0;
+    } catch (error: any) {
+      throw new DatabaseError(
+        `Failed to check clip validity: ${error.message}`,
+      );
+    }
   }
 
   async getExpiredClips(limit: number = 100): Promise<any[]> {
-    const query = `
-      SELECT id, s3_key 
-      FROM clips 
-      WHERE expires_at < NOW() AND s3_key IS NOT NULL
-      ORDER BY expires_at ASC
-      LIMIT $1
-    `;
-    const result = await this.query(query, [limit]);
-    return result.rows;
+    try {
+      const rows = await this.sql`
+        SELECT id, s3_key 
+        FROM clips 
+        WHERE expires_at < NOW() AND s3_key IS NOT NULL
+        ORDER BY expires_at ASC
+        LIMIT ${limit}
+      `;
+      return rows;
+    } catch (error: any) {
+      throw new DatabaseError(`Failed to get expired clips: ${error.message}`);
+    }
   }
 
   async deleteClip(jobId: string): Promise<void> {
-    const query = "DELETE FROM clips WHERE id = $1";
-    await this.query(query, [jobId]);
-    logger.info("Deleted clip record", { jobId });
+    try {
+      await this.sql`DELETE FROM clips WHERE id = ${jobId}`;
+      logger.info("Deleted clip record", { jobId });
+    } catch (error: any) {
+      throw new DatabaseError(`Failed to delete clip: ${error.message}`);
+    }
   }
 
   async getStats(): Promise<{
@@ -192,32 +196,26 @@ class Database {
     completed: number;
     failed: number;
   }> {
-    const query = `
-      SELECT 
-        COUNT(*) as total,
-        COUNT(*) FILTER (WHERE status = 'pending') as pending,
-        COUNT(*) FILTER (WHERE status = 'processing') as processing,
-        COUNT(*) FILTER (WHERE status = 'completed') as completed,
-        COUNT(*) FILTER (WHERE status = 'failed') as failed
-      FROM clips
-      WHERE expires_at > NOW()
-    `;
-    const result = await this.query(query);
-    return result.rows[0] as any;
-  }
-
-  async getClient(): Promise<PoolClient> {
-    return await this.pool.connect();
-  }
-
-  async close(): Promise<void> {
-    await this.pool.end();
-    logger.info("Database connections closed");
+    try {
+      const rows = await this.sql`
+        SELECT 
+          COUNT(*) as total,
+          COUNT(*) FILTER (WHERE status = 'pending') as pending,
+          COUNT(*) FILTER (WHERE status = 'processing') as processing,
+          COUNT(*) FILTER (WHERE status = 'completed') as completed,
+          COUNT(*) FILTER (WHERE status = 'failed') as failed
+        FROM clips
+        WHERE expires_at > NOW()
+      `;
+      return rows[0] as any;
+    } catch (error: any) {
+      throw new DatabaseError(`Failed to get stats: ${error.message}`);
+    }
   }
 
   async healthCheck(): Promise<boolean> {
     try {
-      await this.query("SELECT 1");
+      await this.sql`SELECT 1`;
       return true;
     } catch {
       return false;

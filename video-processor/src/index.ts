@@ -11,8 +11,6 @@ async function start() {
 
     const stats = await database.getStats();
     logger.info("Database stats:", stats);
-
-    await database.close();
   } catch (error: any) {
     logger.error("Startup failed:", { error: error.message });
     process.exit(1);
