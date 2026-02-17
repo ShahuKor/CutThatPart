@@ -9,6 +9,7 @@ import {
 import { FileSystemUtils } from "../utils/filesystem";
 import { config } from "../config";
 import { DownloadOptions, DownloadResult } from "../types/index";
+
 const logger = createLogger("VideoDownloader");
 
 export class VideoDownloader {

@@ -70,6 +70,7 @@ export interface Config {
     };
     sqs: {
       queueUrl: string;
+      maxMessages: number;
     };
   };
 
@@ -80,5 +81,10 @@ export interface Config {
   video: {
     maxDuration: number;
     tempDir: string;
+    outputFormat: string;
+  };
+  worker: {
+    concurrency: number;
+    pollIntervalMs: number;
   };
 }

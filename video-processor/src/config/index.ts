@@ -32,6 +32,7 @@ export const config: Config = {
     },
     sqs: {
       queueUrl: getEnvVar("SQS_QUEUE_URL"),
+      maxMessages: getEnvVarAsNumber("SQS_MAX_MESSAGES", 1),
     },
   },
 
@@ -42,5 +43,10 @@ export const config: Config = {
   video: {
     maxDuration: getEnvVarAsNumber("VIDEO_MAX_DURATION", 600),
     tempDir: getEnvVar("VIDEO_TEMP_DIR", "/tmp/video-clips"),
+    outputFormat: getEnvVar("VIDEO_OUTPUT_FORMAT", "mp4"),
+  },
+  worker: {
+    concurrency: getEnvVarAsNumber("WORKER_CONCURRENCY", 2),
+    pollIntervalMs: getEnvVarAsNumber("WORKER_POLL_INTERVAL_MS", 5000),
   },
 };

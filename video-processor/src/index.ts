@@ -1,6 +1,10 @@
 import { database } from "./services/database";
 import { videoDownloader } from "./services/videoDownloader";
 import { logger } from "./utils/logger";
+import { jobProcessor } from "./services/jobProcessor";
+import { cleanupService } from "./services/cleanup";
+import { FileSystemUtils } from "./utils/filesystem";
+import { config } from "./config";
 
 async function start() {
   try {
@@ -10,31 +14,33 @@ async function start() {
     await database.initialize();
     logger.info("Schema initialized");
 
-    const stats = await database.getStats();
-    logger.info("Database stats:", stats);
-
     await videoDownloader.checkDependencies();
     logger.info("yt-dlp and ffmpeg available");
 
-    logger.info("Starting test download...");
-    const result = await videoDownloader.downloadClip({
-      youtubeUrl: "https://www.youtube.com/shorts/tT1JRa28iL0",
-      startTime: 0,
-      endTime: 10,
-      outputPath:
-        "/Users/shahukor/Desktop/Serious_Projects/youtube-clip-share/tmp/test-clip.mp4",
-      jobId: "test-job-123",
-    });
+    await FileSystemUtils.ensureDir(config.video.tempDir);
+    logger.info("Temp directory ready");
 
-    logger.info("Download successful!", {
-      fileSize: `${(result.fileSize / 1024 / 1024).toFixed(2)} MB`,
-      duration: `${result.duration}s`,
-      filePath: result.filePath,
-    });
+    cleanupService.start();
+    logger.info("Cleanup service started");
+
+    await jobProcessor.start();
+    logger.info("Job processor started - waiting for jobs...");
   } catch (error: any) {
     logger.error("Startup failed:", { error: error.message });
     process.exit(1);
   }
 }
+
+process.on("SIGTERM", async () => {
+  logger.info("SIGTERM received, shutting down...");
+  await jobProcessor.shutdown();
+  process.exit(0);
+});
+
+process.on("SIGINT", async () => {
+  logger.info("SIGINT received, shutting down...");
+  await jobProcessor.shutdown();
+  process.exit(0);
+});
 
 start();
