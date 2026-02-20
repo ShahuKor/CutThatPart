@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Hero() {
   return (
     <div
-      className="min-h-screen px-8 pt-17 sm:pt-20 sm:pb-10 relative "
+      className="mb-14 md:mb-20 lg:mb-26 px-8 py-10 sm:py-15 relative "
       style={{
         backgroundImage: `radial-gradient(circle, #a8a29e 1px, transparent 1px)`,
         backgroundSize: "24px 24px",
