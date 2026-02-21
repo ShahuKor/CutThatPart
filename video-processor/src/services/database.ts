@@ -35,6 +35,7 @@ class Database {
       await this.sql`
         CREATE TABLE IF NOT EXISTS clips (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          user_id TEXT NOT NULL, 
           youtube_url TEXT NOT NULL,
           start_time INTEGER NOT NULL CHECK (start_time >= 0),
           end_time INTEGER NOT NULL CHECK (end_time > start_time),
@@ -49,6 +50,10 @@ class Database {
           updated_at TIMESTAMP DEFAULT NOW(),
           expires_at TIMESTAMP DEFAULT NOW() + INTERVAL '2 days'
         )
+      `;
+
+      await this.sql`
+        CREATE INDEX IF NOT EXISTS idx_clips_user_id ON clips(user_id);
       `;
 
       await this.sql`

@@ -11,24 +11,22 @@ export default function HowCard({ src, cardtitle, description }: HowCardProps) {
       transition-shadow duration-300
     "
     >
-      {/* Image container */}
       <div className="relative w-full h-52 overflow-hidden">
         <img
           src={src}
           alt={cardtitle}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        {/* White-to-transparent gradient overlay at the bottom */}
+
         <div
           className="
           absolute inset-x-0 bottom-0 h-24
-          bg-gradient-to-t from-white dark:from-neutral-900 to-transparent
+          bg-linear-to-t from-white dark:from-neutral-900 to-transparent
           pointer-events-none
         "
         />
       </div>
 
-      {/* Text content — sits just below the gradient fade */}
       <div className="px-5 pb-5 -mt-3 relative z-10">
         <h3 className="text-sm md:text-base font-semibold text-neutral-800 dark:text-neutral-100 leading-snug mb-1.5">
           {cardtitle}

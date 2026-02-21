@@ -33,7 +33,7 @@ export default function Navbar() {
             {/* Desktop Nav */}
             <div className="hidden md:flex">
               <SignedIn>
-                <Link href="/clips" className={linkClass}>
+                <Link href="/dashboard" className={linkClass}>
                   <span className="text-sm">Your Clips</span>
                 </Link>
                 <Link href="/profile" className={linkClass}>
@@ -104,7 +104,7 @@ export default function Navbar() {
           <div className="flex flex-col items-center w-full  dark:border-neutral-500/70 border-neutral-300">
             <SignedIn>
               <Link
-                href="/clips"
+                href="/dashboard"
                 className={mobileLinkClass}
                 onClick={() => setMenuOpen(false)}
               >
