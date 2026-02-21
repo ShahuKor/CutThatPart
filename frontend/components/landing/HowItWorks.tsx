@@ -28,7 +28,7 @@ export default function HowItWorks() {
         <h2 className="mb-6 md:mb-13 text-3xl md:text-4xl lg:text-[60px] font-serif bg-clip-text text-transparent bg-linear-to-t from-neutral-600 to-neutral-900 dark:from-neutral-400 dark:to-neutral-100">
           How it Works
         </h2>
-        {/* Mobile: flex-col / Desktop: diagonal staircase */}
+
         <div className="flex flex-col gap-4 md:flex md:flex-row md:items-start md:gap-4">
           {cardItems.map((item, index) => (
             <div

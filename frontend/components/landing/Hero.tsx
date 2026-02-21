@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Hero() {
   return (
     <div
-      className="mb-14 md:mb-20 lg:mb-26 px-8 py-10 sm:py-15 relative "
+      className="mb-14 md:mb-18 lg:mb-23 px-8 py-10 sm:pt-30 relative "
       style={{
         backgroundImage: `radial-gradient(circle, #a8a29e 1px, transparent 1px)`,
         backgroundSize: "24px 24px",
@@ -15,8 +15,8 @@ export default function Hero() {
       <div className="absolute inset-0 hidden dark:block bg-linear-to-b from-neutral-950/0 via-neutral-950/60 to-neutral-950 pointer-events-none" />
 
       <div className="mt-23 relative z-10">
-        <div className="flex flex-col justify-start gap-2 sm:gap-3 lg:gap-0 md:gap-2">
-          <div className="bg-neutral-800/90 border border-neutral-800/90 dark:bg-transparent dark:border dark:border-neutral-300/30 w-20 md:w-22 py-1  px-2">
+        <div className="flex flex-col justify-start gap-2 sm:gap-3 md:gap-2">
+          <div className="bg-neutral-800/90 border border-neutral-800/90 dark:bg-transparent dark:border dark:border-neutral-300/30 w-20 md:w-22 py-1 px-2">
             <p className="text-[10px] md:text-xs font-semibold tracking-tight text-neutral-100 dark:text-neutral-200 ">
               CutThatPart
             </p>

@@ -4,7 +4,7 @@ import { Container } from "../Container";
 import { useTheme } from "next-themes";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignOutButton, UserButton } from "@clerk/nextjs";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
@@ -29,18 +29,21 @@ export default function Navbar() {
     <>
       <div className="border-b border-neutral-300 dark:border-neutral-500/70 bg-white dark:bg-neutral-950">
         <Container>
-          <div className="flex justify-end h-15">
+          <div className="flex justify-end md:justify-between h-15">
             {/* Desktop Nav */}
+            <div className="hidden md:flex border-l border-r dark:border-neutral-500/70 border-neutral-300 last:border-r px-4 py-4 text-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-200 dark:hover:text-neutral-800 hover:bg-neutral-800 hover:text-neutral-200 transition-colors duration-300">
+              <UserButton />
+            </div>
             <div className="hidden md:flex">
               <SignedIn>
                 <Link href="/dashboard" className={linkClass}>
                   <span className="text-sm">Your Clips</span>
                 </Link>
-                <Link href="/profile" className={linkClass}>
-                  <span className="text-sm">Profile</span>
-                </Link>
+
                 <div className={linkClass}>
-                  <UserButton />
+                  <span className="text-sm">
+                    <SignOutButton />
+                  </span>
                 </div>
               </SignedIn>
 
@@ -111,12 +114,15 @@ export default function Navbar() {
                 <span className="text-sm">Your Clips</span>
               </Link>
               <Link
-                href="/profile"
+                href="/dashboard"
                 className={mobileLinkClass}
                 onClick={() => setMenuOpen(false)}
               >
-                <span className="text-sm">Profile</span>
+                <span className="text-sm">
+                  <SignOutButton />
+                </span>
               </Link>
+
               <div className="w-full flex justify-center px-6 py-4  dark:border-neutral-500/70 border-neutral-300">
                 <UserButton />
               </div>
