@@ -69,20 +69,22 @@ export default function ClipForm() {
       )}
 
       <div>
-        <label className="block text-sm font-medium mb-2">YouTube URL</label>
+        <label className="block text-xs sm:text-sm font-sans tracking-tight mb-2">
+          YouTube URL
+        </label>
         <input
           type="url"
           value={youtubeUrl}
           onChange={(e) => setYoutubeUrl(e.target.value)}
           placeholder="https://www.youtube.com/watch?v=..."
           required
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-neutral-900/60 dark:border-neutral-400/50 focus:outline-none focus:ring-0 focus:border-inherit text-xs sm:text-[15px]"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-xs sm:text-sm font-sans tracking-tight mb-2">
             Start Time (MM:SS)
           </label>
           <input
@@ -92,12 +94,12 @@ export default function ClipForm() {
             placeholder="00:00"
             pattern="[0-9]{2}:[0-9]{2}"
             required
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-neutral-900/60 dark:border-neutral-400/50 focus:outline-none focus:ring-0 focus:border-inherit text-xs sm:text-[15px]"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-xs sm:text-sm font-sans tracking-tight mb-2">
             End Time (MM:SS)
           </label>
           <input
@@ -107,13 +109,13 @@ export default function ClipForm() {
             placeholder="00:10"
             pattern="[0-9]{2}:[0-9]{2}"
             required
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-neutral-900/60 dark:border-neutral-400/50 focus:outline-none focus:ring-0 focus:border-inherit text-xs sm:text-[15px]"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2">
+        <label className="block text-xs sm:text-sm font-sans tracking-tight mb-2">
           Your Name (optional)
         </label>
         <input
@@ -121,13 +123,13 @@ export default function ClipForm() {
           value={sharerName}
           onChange={(e) => setSharerName(e.target.value)}
           placeholder="Anonymous"
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-neutral-900/60 dark:border-neutral-400/50 focus:outline-none focus:ring-0 focus:border-inherit text-xs sm:text-[15px]"
         />
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+        className="block w-full py-2 text-center border-stone-800 text-[12px] dark:border-stone-200 border hover:bg-white dark:hover:bg-neutral-950 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ease-in-out duration-300 hover:border-neutral-500/50 dark:hover:border-neutral-400/50 hover:border rounded-none sm:text-xs md:text-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-neutral-900 disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
         {loading ? "Creating Clip..." : "Create Clip"}
       </button>
