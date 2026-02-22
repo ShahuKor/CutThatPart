@@ -31,9 +31,15 @@ export default function Navbar() {
         <Container>
           <div className="flex justify-end md:justify-between h-15">
             {/* Desktop Nav */}
-            <div className="hidden md:flex border-l border-r dark:border-neutral-500/70 border-neutral-300 last:border-r px-4 py-4 text-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-200 dark:hover:text-neutral-800 hover:bg-neutral-800 hover:text-neutral-200 transition-colors duration-300">
-              <UserButton />
-            </div>
+            <SignedIn>
+              <div className="hidden md:flex border-l border-r dark:border-neutral-500/70 border-neutral-300 last:border-r px-4 py-4 text-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-200 dark:hover:text-neutral-800 hover:bg-neutral-800 hover:text-neutral-200 transition-colors duration-300">
+                <UserButton />
+              </div>
+            </SignedIn>
+            <SignedOut>
+              <div></div>
+            </SignedOut>
+
             <div className="hidden md:flex">
               <SignedIn>
                 <Link href="/dashboard" className={linkClass}>

@@ -41,7 +41,7 @@ export default function Hero() {
 
         <div className="flex gap-2 mt-3 md:mt-5">
           <div>
-            <Link href={"/"}>
+            <Link href={"/dashboard"}>
               <button className="border-stone-800 text-[10px] w-26 md:w-32 sm:w-28 dark:border-stone-200 border py-2 px-1 hover:bg-white dark:hover:bg-neutral-950 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ease-in-out duration-300 hover:border-neutral-500/50 dark:hover:border-neutral-400/50 hover:border rounded-none sm:text-xs md:text-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-neutral-900 flex items-center justify-center gap-2">
                 Start Clipping
                 <svg

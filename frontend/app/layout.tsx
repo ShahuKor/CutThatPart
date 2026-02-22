@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/common/Navbar";
 import { ThemeProvider } from "next-themes";
 import { ClerkProvider } from "@clerk/nextjs";
+import ConditionalNavbar from "@/components/ConditionalNavbar";
 
 const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
@@ -34,7 +34,7 @@ export default function RootLayout({
           className={`${instrumentSans.variable} ${instrumentSerif.variable} antialiased`}
         >
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-            <Navbar />
+            <ConditionalNavbar />
             {children}
           </ThemeProvider>
         </body>

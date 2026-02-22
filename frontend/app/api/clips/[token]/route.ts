@@ -13,6 +13,7 @@ export async function GET(
     const result = await sql`
       SELECT 
         id, 
+        user_id,
         youtube_url, 
         start_time, 
         end_time, 
