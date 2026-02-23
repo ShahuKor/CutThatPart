@@ -6,12 +6,12 @@ export default function Features() {
     "pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-amber-50/60 dark:bg-yellow-900/15";
 
   return (
-    <div className="px-8 py-16">
+    <div className="px-8 py-12 lg:py-16">
       <h2 className="mb-8 text-4xl lg:text-[60px] font-serif bg-clip-text text-transparent bg-linear-to-t from-neutral-600 to-neutral-900 dark:from-neutral-400 dark:to-neutral-100">
         Features
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-neutral-200 dark:bg-neutral-800 border-t border-b border-neutral-200 dark:border-neutral-800">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-neutral-200 dark:bg-neutral-800 border-t border-b border-neutral-200 dark:border-neutral-800 font-sans">
         <div className={`lg:col-span-2 ${card} p-8 flex flex-col gap-4`}>
           <div className={overlay} />
           <div className="flex items-start gap-3 relative z-10">

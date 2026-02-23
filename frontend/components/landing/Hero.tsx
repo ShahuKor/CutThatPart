@@ -27,7 +27,7 @@ export default function Hero() {
             </h1>
           </div>
 
-          <div className="flex flex-col gap-2 md:gap-4 font-medium text-neutral-800 dark:text-neutral-200">
+          <div className="flex flex-col gap-2 md:gap-4 font-medium text-neutral-800 dark:text-neutral-200 font-sans">
             <h2 className="text-xs sm:text-md md:text-lg tracking-tight">
               Trim any YouTube video and send a clean,{" "}
               <span className="text-neutral-500 dark:text-neutral-400 font-stretch-100%">

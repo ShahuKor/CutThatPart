@@ -26,13 +26,13 @@ const diagonalOffsets = ["lg:mt-0", "lg:mt-40", "lg:mt-80"];
 
 export default function HowItWorks() {
   return (
-    <div className="px-8 py-16">
+    <div className="px-8 py-10 lg:py-16">
       <div className="flex flex-col">
         <h2 className="mb-8 text-4xl lg:text-[60px] font-serif bg-clip-text text-transparent bg-linear-to-t from-neutral-600 to-neutral-900 dark:from-neutral-400 dark:to-neutral-100">
           How it Works
         </h2>
 
-        <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-start gap-10 sm:gap-8 lg:gap-4">
           {cardItems.map((item, index) => (
             <div
               key={index}

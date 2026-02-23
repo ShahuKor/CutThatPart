@@ -27,7 +27,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="border-b border-neutral-300 dark:border-neutral-500/70 bg-white dark:bg-neutral-950">
+      <div className="sticky top-0 z-50 border-b border-neutral-300 dark:border-neutral-500/70 bg-white dark:bg-neutral-950">
         <Container>
           <div className="flex justify-end md:justify-between h-15">
             {/* Desktop Nav */}

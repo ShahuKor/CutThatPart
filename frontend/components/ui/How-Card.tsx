@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { HowCardProps } from "@/types/types";
 
 export default function HowCard({
@@ -7,35 +8,22 @@ export default function HowCard({
   description,
 }: HowCardProps) {
   return (
-    <div
-      className="
-      group relative w-full max-w-sm rounded-2xl overflow-hidden
-      border border-neutral-200/60 dark:border-neutral-700/40
-      bg-white dark:bg-neutral-900
-      shadow-sm hover:shadow-md
-      transition-shadow duration-300
-    "
-    >
+    <div className="group relative w-full max-w-sm rounded-2xl overflow-hidden border border-neutral-200/60 dark:border-neutral-700/40 bg-white dark:bg-neutral-900 shadow-sm hover:shadow-md transition-shadow duration-300">
       <div className="relative w-full h-52 overflow-hidden">
-        <img
+        <Image
           src={srcLight}
           alt={cardtitle}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 dark:hidden"
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105 dark:hidden"
         />
-
-        <img
+        <Image
           src={srcDark}
           alt={cardtitle}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 hidden dark:block"
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105 hidden dark:block"
         />
 
-        <div
-          className="
-          absolute inset-x-0 bottom-0 h-24
-          bg-linear-to-t from-white dark:from-neutral-900 to-transparent
-          pointer-events-none
-        "
-        />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-white dark:from-neutral-900 to-transparent pointer-events-none" />
       </div>
 
       <div className="px-5 pb-5 -mt-3 relative z-10">

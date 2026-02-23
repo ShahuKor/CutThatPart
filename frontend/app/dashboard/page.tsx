@@ -54,7 +54,7 @@ export default function DashboardPage() {
           </Link>
         </div>
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl sm:text-3xl  bg-clip-text text-transparent bg-linear-to-t from-neutral-600 to-neutral-900 dark:from-neutral-400 dark:to-neutral-100">
+          <h1 className="text-2xl sm:text-3xl  bg-clip-text text-transparent bg-linear-to-t from-neutral-600 to-neutral-900 dark:from-neutral-400 dark:to-neutral-100 font-sans">
             Your Clips
           </h1>
           <div>
