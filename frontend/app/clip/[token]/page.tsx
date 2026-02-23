@@ -168,7 +168,7 @@ export default function ClipPage() {
               </p>
             </div>
             <VideoPlayer
-              s3Url={`https://${process.env.NEXT_PUBLIC_S3_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${clip.s3_key}`}
+              s3Url={clip.video_url}
               sharerName={clip.sharer_name}
               shareToken={token}
               youtubeUrl={clip.youtube_url}

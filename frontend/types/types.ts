@@ -1,5 +1,6 @@
 export interface HowCardProps {
-  src: string;
+  srcDark: string;
+  srcLight: string;
   cardtitle: string;
   description: string;
 }

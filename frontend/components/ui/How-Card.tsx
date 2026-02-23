@@ -1,6 +1,11 @@
 import { HowCardProps } from "@/types/types";
 
-export default function HowCard({ src, cardtitle, description }: HowCardProps) {
+export default function HowCard({
+  srcDark,
+  srcLight,
+  cardtitle,
+  description,
+}: HowCardProps) {
   return (
     <div
       className="
@@ -13,9 +18,15 @@ export default function HowCard({ src, cardtitle, description }: HowCardProps) {
     >
       <div className="relative w-full h-52 overflow-hidden">
         <img
-          src={src}
+          src={srcLight}
           alt={cardtitle}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 dark:hidden"
+        />
+
+        <img
+          src={srcDark}
+          alt={cardtitle}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 hidden dark:block"
         />
 
         <div

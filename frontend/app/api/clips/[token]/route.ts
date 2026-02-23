@@ -1,3 +1,4 @@
+import { generatePresignedUrl } from "@/lib/s3";
 import { neon } from "@neondatabase/serverless";
 import { NextResponse } from "next/server";
 
@@ -40,8 +41,17 @@ export async function GET(
     if (new Date(clip.expires_at) < new Date()) {
       return NextResponse.json({ error: "Clip has expired" }, { status: 410 });
     }
+    let videoUrl = null;
+    if (clip.status === "completed" && clip.s3_key) {
+      videoUrl = await generatePresignedUrl(clip.s3_key);
+    }
 
-    return NextResponse.json({ clip });
+    return NextResponse.json({
+      clip: {
+        ...clip,
+        video_url: videoUrl,
+      },
+    });
   } catch (error: any) {
     console.error("Get clip error:", error);
     return NextResponse.json(
