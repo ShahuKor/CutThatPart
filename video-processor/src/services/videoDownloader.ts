@@ -183,9 +183,8 @@ export class VideoDownloader {
         // Force keyframes at cuts for better quality
         "--force-keyframes-at-cuts",
 
-        // Format selection - prefer mp4
         "--format",
-        "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+        "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
 
         // Merge to mp4
         "--merge-output-format",
@@ -204,7 +203,6 @@ export class VideoDownloader {
 
         // Continue on download errors
         "--ignore-errors",
-
         // Use aria2c for faster downloads if available
         "--external-downloader",
         "aria2c",
